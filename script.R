@@ -1,6 +1,6 @@
 # data import
 import.raw <- read.table(file.choose())
-## AGI of interest from 2011MSB
+## AGI of interest from 2011MSB -> seq.AGI
 {
     seq.AGI <- read.table("seq.AGI.txt", sep = "\t", header = T)
     ### set class
@@ -8,20 +8,20 @@ import.raw <- read.table(file.choose())
     seq.AGI$GPA1.Prey <- as.factor(seq.AGI$GPA1.Prey)
     seq.AGI$AGB1.Prey <- as.factor(seq.AGI$AGB1.Prey)
 }
-## AGI ref from Affy
+## AGI ref from Affy -> ref.AGI
 {
     ref.AGI <- read.table("ref.AGI.raw.txt", sep = "\t", header = T, na.strings = "")  
     ### set class
     #ref.AGI[, 2] <- as.character(ref.AGI[, 2])
     #ref.AGI[, 3] <- as.character(ref.AGI[, 3])
 }
-## expr data from 2008PM
+## expr data from 2008PM -> expr.raw expr.signal
 {
     expr.raw <- read.table("expr.raw.txt", sep = "\t", header = T)
-    expr <- expr.raw[, c(1,2,3,6,9,12,15,18,21,24)]  ## extract signal data
+    expr.signal <- expr.raw[, c(1,2,3,6,9,12,15,18,21,24)]  ## extract signal data
 }
 
-# matchup AGI between 2011MSB & Affy
+# FUNC matchup AGI between 2011MSB & Affy
 matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col = 2, extra.col = 1) {
     matchup.out <- data.frame(stringsAsFactors = FALSE)
     #names(matchup.out) <- c('Probe.Set.ID', 'AGI')
@@ -46,7 +46,7 @@ matchup(seq.test)
 rm(seq.test)
 matchup(seq.AGI[c(1:50), ])
 }
-## run matchup
+## run matchup -> matchup.out
 {
 matchup.out <- matchup()
 names(matchup.out) <- c('Affy', 'AGI', 'Set.Num')
@@ -54,3 +54,22 @@ names(matchup.out) <- c('Affy', 'AGI', 'Set.Num')
 }
 
 # expr comp signal
+## matchup expr gpro of matchup.out to 2008PM data -> expr.out
+expr.out <- matchup(seq.data = matchup.out, ref.data = expr.signal, seq.col = 3, ref.col = 1, extra.col = 2:10)
+## FUNC to clean duplicate Set.Num # errors caused unknown actually
+clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
+{
+    expr = data.frame()
+    for (i in c(1:dim(data)[1])) {
+        if (expr.out[i, ref.col] == expr.out[i, dup.col]) {
+            expr <- rbind(expr, expr.out[i,])
+        }
+    }
+    return(expr)
+}
+## run clean.dup -> expr
+{
+expr <- clean.dup()
+expr <- expr[, 2:dim(expr)[2]]
+rownames(expr) <- seq(1:dim(expr)[1])
+}

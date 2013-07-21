@@ -1,4 +1,5 @@
-# data import 
+# data import
+import.raw <- read.table(file.choose())
 ## AGI of interest from 2011MSB
 {
     seq.AGI <- read.table("seq.AGI.txt", sep = "\t", header = T)
@@ -13,6 +14,11 @@
     ### set class
     #ref.AGI[, 2] <- as.character(ref.AGI[, 2])
     #ref.AGI[, 3] <- as.character(ref.AGI[, 3])
+}
+## expr data from 2008PM
+{
+    expr.raw <- read.table("expr.raw.txt", sep = "\t", header = T)
+    expr <- expr.raw[, c(1,2,3,6,9,12,15,18,21,24)]  ## extract signal data
 }
 
 # matchup AGI between 2011MSB & Affy
@@ -30,7 +36,7 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col
             matchup.out <- rbind(matchup.out, matchup.row); matchup.out
         }
     }
-    names(matchup.out) <- c('affy', 'AGI')
+    names(matchup.out) <- c('Affy', 'AGI')
     return(matchup.out)
 }
 ## test matchup
@@ -43,3 +49,4 @@ matchup(seq.AGI[c(1:50), ])
 }
 ## run matchup
 matchup.out <- matchup()
+

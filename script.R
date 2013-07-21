@@ -22,7 +22,7 @@ import.raw <- read.table(file.choose())
 }
 
 # matchup AGI between 2011MSB & Affy
-matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col = 2) {
+matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col = 2, extra.col = 1) {
     matchup.out <- data.frame(stringsAsFactors = FALSE)
     #names(matchup.out) <- c('Probe.Set.ID', 'AGI')
     for (i in c(1:dim(seq.data)[1])) {
@@ -32,11 +32,10 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col
             col <- loc %/% dim(ref.data)[1]
             row <- loc %% dim(ref.data)[1]; col; row
             #matchup.row <- data.frame(as.character(ref.data[row, ref.col]), as.character(seq)); matchup.row
-            matchup.row <- data.frame(ref.data[row, ref.col], seq); matchup.row
+            matchup.row <- data.frame(ref.data[row, ref.col], seq, ref.data[row, extra.col]); matchup.row
             matchup.out <- rbind(matchup.out, matchup.row); matchup.out
         }
     }
-    names(matchup.out) <- c('Affy', 'AGI')
     return(matchup.out)
 }
 ## test matchup
@@ -48,5 +47,10 @@ rm(seq.test)
 matchup(seq.AGI[c(1:50), ])
 }
 ## run matchup
+{
 matchup.out <- matchup()
+names(matchup.out) <- c('Affy', 'AGI', 'Set.Num')
+#matchup.out_id <- matchup(seq.data = matchup.out, ref.col = 1)  ## add Set.Num !fail
+}
 
+# expr comp signal

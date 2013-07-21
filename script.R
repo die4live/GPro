@@ -9,14 +9,14 @@
 }
 ## AGI ref from Affy
 {
-    ref.AGI.todo <- read.table("ref.AGI.raw.txt", sep = "\t", header = T, na.strings = "")  
+    ref.AGI <- read.table("ref.AGI.raw.txt", sep = "\t", header = T, na.strings = "")  
     ### set class
-    #ref.AGI.todo[, 2] <- as.character(ref.AGI.todo[, 2])
-    #ref.AGI.todo[, 3] <- as.character(ref.AGI.todo[, 3])
+    #ref.AGI[, 2] <- as.character(ref.AGI[, 2])
+    #ref.AGI[, 3] <- as.character(ref.AGI[, 3])
 }
 
 # matchup AGI between 2011MSB & Affy
-matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI.todo, seq.col = 1, ref.col = 2) {
+matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col = 2) {
     matchup.out <- data.frame(stringsAsFactors = FALSE)
     #names(matchup.out) <- c('Probe.Set.ID', 'AGI')
     for (i in c(1:dim(seq.data)[1])) {
@@ -30,6 +30,7 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI.todo, seq.col = 1, re
             matchup.out <- rbind(matchup.out, matchup.row); matchup.out
         }
     }
+    names(matchup.out) <- c('affy', 'AGI')
     return(matchup.out)
 }
 ## test matchup
@@ -37,6 +38,7 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI.todo, seq.col = 1, re
 seq.test <- data.frame(c("ATMG00880", "AT2G07768", "ATMG00960"), c(1,0,1))  ## ref.data[5,3],[6,3][6,4]
 seq.test[,1] <- as.character(seq.test[,1])
 matchup(seq.test)
+rm(seq.test)
 matchup(seq.AGI[c(1:50), ])
 }
 ## run matchup

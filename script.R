@@ -72,4 +72,14 @@ clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
 expr <- clean.dup()
 expr <- expr[, 2:dim(expr)[2]]
 rownames(expr) <- seq(1:dim(expr)[1])
+names(expr) <- c('Set.Num', 'Affy', 'GCI', 'GAI', 'MCI', 'MAI', 'GCN', 'GAN', 'MCN', 'MAN')
+}
+## Notations of expr treatments
+{
+G :: guard cell
+M :: mesophyll cell
+C :: control treatment
+A :: ABA treatment
+I :: with inhibitors
+N :: non inhibitor
 }

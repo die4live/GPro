@@ -15,7 +15,7 @@ import.raw <- read.table(file.choose())
     #ref.AGI[, 2] <- as.character(ref.AGI[, 2])
     #ref.AGI[, 3] <- as.character(ref.AGI[, 3])
 }
-## expr data from 2008PM -> expr.raw expr.signal
+## expr data from 2008PM -> expr.raw && expr.signal
 {
     expr.raw <- read.table("expr.raw.txt", sep = "\t", header = T)
     expr.signal <- expr.raw[, c(1,2,3,6,9,12,15,18,21,24)]  ## extract signal data
@@ -67,19 +67,23 @@ clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
     }
     return(expr)
 }
-## run clean.dup -> expr
+## run clean.dup -> expr && geneID
 {
 expr <- clean.dup()
 expr <- expr[, 2:dim(expr)[2]]
 rownames(expr) <- seq(1:dim(expr)[1])
 names(expr) <- c('Set.Num', 'Affy', 'GCI', 'GAI', 'MCI', 'MAI', 'GCN', 'GAN', 'MCN', 'MAN')
+geneID <- expr[, 1:2]
+expr <- expr[, c(1, 3:dim(expr)[2])]
 }
 ## Notations of expr treatments
 {
 G :: guard cell
 M :: mesophyll cell
 C :: control treatment
-A :: ABA treatment
-I :: with inhibitors
-N :: non inhibitor
+A :: ABA treatment  *100 uM*
+I :: with inhibitors *Actinomycin and Cordycepin were added during protoplast isolation.*
+N :: no inhibitor
 }
+
+# expr signal explore

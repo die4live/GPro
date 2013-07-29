@@ -40,17 +40,17 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col
 }
 ## test matchup
 {
-seq.test <- data.frame(c("ATMG00880", "AT2G07768", "ATMG00960"), c(1,0,1))  ## ref.data[5,3],[6,3][6,4]
-seq.test[,1] <- as.character(seq.test[,1])
-matchup(seq.test)
-rm(seq.test)
-matchup(seq.AGI[c(1:50), ])
+    seq.test <- data.frame(c("ATMG00880", "AT2G07768", "ATMG00960"), c(1,0,1))  ## ref.data[5,3],[6,3][6,4]
+    seq.test[,1] <- as.character(seq.test[,1])
+    matchup(seq.test)
+    rm(seq.test)
+    matchup(seq.AGI[c(1:50), ])
 }
 ## run matchup -> matchup.out
 {
-matchup.out <- matchup()
-names(matchup.out) <- c('Affy', 'AGI', 'Set.Num')
-#matchup.out_id <- matchup(seq.data = matchup.out, ref.col = 1)  ## add Set.Num !fail
+    matchup.out <- matchup()
+    names(matchup.out) <- c('Affy', 'AGI', 'Set.Num')
+    #matchup.out_id <- matchup(seq.data = matchup.out, ref.col = 1)  ## add Set.Num !fail
 }
 
 # expr comp signal
@@ -69,21 +69,26 @@ clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
 }
 ## run clean.dup -> expr && geneID
 {
-expr <- clean.dup()
-expr <- expr[, 2:dim(expr)[2]]
-rownames(expr) <- seq(1:dim(expr)[1])
-names(expr) <- c('Set.Num', 'Affy', 'GCI', 'GAI', 'MCI', 'MAI', 'GCN', 'GAN', 'MCN', 'MAN')
-geneID <- expr[, 1:2]
-expr <- expr[, c(1, 3:dim(expr)[2])]
+    expr <- clean.dup()
+    expr <- expr[, 2:dim(expr)[2]]
+    rownames(expr) <- seq(1:dim(expr)[1])
+    names(expr) <- c('Set.Num', 'Affy', 'GCI', 'GAI', 'MCI', 'MAI', 'GCN', 'GAN', 'MCN', 'MAN')
+    expr <- expr[, c(1, 3:dim(expr)[2])]
 }
 ## Notations of expr treatments
 {
-G :: guard cell
-M :: mesophyll cell
-C :: control treatment
-A :: ABA treatment  *100 uM*
-I :: with inhibitors *Actinomycin and Cordycepin were added during protoplast isolation.*
-N :: no inhibitor
+    G :: guard cell
+    M :: mesophyll cell
+    C :: control treatment
+    A :: ABA treatment  *100 uM*
+        I :: with inhibitors *Actinomycin and Cordycepin were added during protoplast isolation.*
+        N :: no inhibitor
+}
+## expr.out export -> expr.out && expr.out.txt
+{
+    expr.out <- cbind(matchup.out,expr)
+    expr.out <- expr.out[,-4]
+    write.table(expr.out, "./expr.out.txt", sep="\t")
 }
 
 # expr signal explore

@@ -22,6 +22,7 @@ import.raw <- read.table(file.choose())
 }
 
 # FUNC matchup AGI between 2011MSB & Affy
+> FUNC matchup() aims to matchup cells in columns (search from <seq.col> in <ref.col>) between two dataframe (<seq.data> and <ref.data>) then outputs rows matchuped containing interested columns (<extra.col>)
 matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col = 2, extra.col = 1) {
     matchup.out <- data.frame(stringsAsFactors = FALSE)
     #names(matchup.out) <- c('Probe.Set.ID', 'AGI')
@@ -57,6 +58,7 @@ matchup <- function(seq.data = seq.AGI, ref.data = ref.AGI, seq.col = 1, ref.col
 ## matchup expr gpro of matchup.out to 2008PM data -> expr.out
 expr.out <- matchup(seq.data = matchup.out, ref.data = expr.signal, seq.col = 3, ref.col = 1, extra.col = 2:10)
 ## FUNC to clean duplicate Set.Num # errors caused unknown actually
+> FUNC clean.dup aims to cleanup duplicate rows containing same cells bewteen two columns (<ref.col> and <dup.col>)
 clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
 {
     expr = data.frame()

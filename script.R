@@ -104,10 +104,17 @@ comp <- function(comp.col, target.col, name = 'comp', data = var, rounds = 3)
 {
     c.col <- which(colnames(data)==comp.col)
     t.col <- which(colnames(data)==target.col)
-    #data[, dim(data)[2]+1] <- round((data[, c.col] - data[, t.col]) / data[, t.col], rounds)
     data <- cbind(data, round((data[, c.col] - data[, t.col]) / data[, t.col], rounds))
     colnames(data)[dim(data)[2]] <- name
     return(data)
+}
+> similar to comp() but output results only as a vector object
+comp.col <- function(comp.col, target.col, data = var, rounds = 3)
+{
+    c.col <- which(colnames(data)==comp.col)
+    t.col <- which(colnames(data)==target.col)
+    col <- round((data[, c.col] - data[, t.col]) / data[, t.col], rounds)
+    return(col)
 }
 ### test comp()
 comp('GAI', 'GCI','GvI')
@@ -116,3 +123,13 @@ var <- comp('GAI', 'GCI', 'GvI')
 var <- comp('MAI', 'MCI', 'MvI')
 var <- comp('GAN', 'GCN', 'GvN')
 var <- comp('MAN', 'MCN', 'MvN')
+var <- comp('MCN', 'GCN', 'vCN')
+var <- comp('MAN', 'GAN', 'vAN')
+## explore data
+boxplot(var[, c(10:13)])
+boxplot(var[, c(14:15)])
+barplot(var$GCN, names.arg = var$Set.Num)
+barplot(t(as.matrix(var[, c(2:9)])), beside = T)
+barplot(t(as.matrix(var[c(1:10), c(2:9)])), beside = T)
+barplot(t(as.matrix(var[, c(10:15)])), beside = T)
+barplot(t(as.matrix(var[c(1:10), c(10:15)])), beside = T)

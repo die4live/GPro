@@ -98,12 +98,6 @@ clean.dup <- function(data = expr.out, ref.col = 1, dup.col = 2)
 var <- expr[order(expr$Set.Num), ]
 `x[order(x[,1],x[,2]),]` for multi-col order
 row.names(var) <- NULL
-## calc var between treatments
-var$GvI <- (var$GAI - var$GCI) / var$GCI
-var$MvI <- (var$MAI - var$MCI) / var$MCI
-var$GvN <- (var$GAN - var$GCN) / var$GCN
-var$MvN <- (var$MAN - var$MCN) / var$MCN
-var[,c(10:13)] <- round(var[,c(10:13)],3)
 ## calculate signal values between two columns as percentage
 > FUNC comp() compares values of two column names (<comp.col>, <target.col>) output a column (<name>)
 comp <- function(comp.col, target.col, name = 'comp', data = var, rounds = 3)
@@ -117,3 +111,8 @@ comp <- function(comp.col, target.col, name = 'comp', data = var, rounds = 3)
 }
 ### test comp()
 comp('GAI', 'GCI','GvI')
+## calc var between treatments
+var <- comp('GAI', 'GCI', 'GvI')
+var <- comp('MAI', 'MCI', 'MvI')
+var <- comp('GAN', 'GCN', 'GvN')
+var <- comp('MAN', 'MCN', 'MvN')

@@ -5,3 +5,4 @@ core
 *.txt
 *.RData
 .DS_Store
+archive

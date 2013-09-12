@@ -119,17 +119,72 @@ comp.col <- function(comp.col, target.col, data = var, rounds = 3)
 ### test comp()
 comp('GAI', 'GCI','GvI')
 ## calc var between treatments
+{
 var <- comp('GAI', 'GCI', 'GvI')
 var <- comp('MAI', 'MCI', 'MvI')
 var <- comp('GAN', 'GCN', 'GvN')
 var <- comp('MAN', 'MCN', 'MvN')
 var <- comp('MCN', 'GCN', 'vCN')
 var <- comp('MAN', 'GAN', 'vAN')
+}
 ## explore data
+{
 boxplot(var[, c(10:13)])
 boxplot(var[, c(14:15)])
 barplot(var$GCN, names.arg = var$Set.Num)
-barplot(t(as.matrix(var[, c(2:9)])), beside = T)
-barplot(t(as.matrix(var[c(1:10), c(2:9)])), beside = T)
-barplot(t(as.matrix(var[, c(10:15)])), beside = T)
-barplot(t(as.matrix(var[c(1:10), c(10:15)])), beside = T)
+barplot(t(as.matrix(var[, c(2:9)])), beside = T, names.arg=var$Set.Num)
+barplot(t(as.matrix(var[, c(10:15)])), beside = T, names.arg=var$Set.Num)
+}
+
+# filter data
+> FUNC outline filters lower and upper outliners in <data> according to column <name> and output a dataframe with <ID.name> and values
+outline <- function(name, data = var, ID.col = 1, ID.name = 'Set.Num')
+{
+    col.n <- which(colnames(data) == name)
+    col <- data[, col.n]
+    margin <- (quantile(col)[4] - quantile(col)[2]) * 1.5
+    lower <- quantile(col)[2] - margin
+    upper <- quantile(col)[4] + margin
+    names(margin) <- NULL
+    names(lower) <- NULL
+    names(upper) <- NULL
+    out.lower <- data[which(col < lower), col.n] ; out.lower
+    out.upper <- data[which(col > upper), col.n] ; out.upper
+    num.lower <- numeric()
+    m <- 1
+    for (i in out.lower) {
+        num.lower[m] <- data[which(data[, col.n] == i), ID.col]
+        m <- m + 1
+    }
+    num.upper <- numeric()
+    n <- 1
+    for (i in out.upper) {
+        num.upper[n] <- data[which(data[, col.n] == i), ID.col]
+        n <- n + 1
+    }
+    lower <- rbind(num.lower, out.lower)
+    lower <- rbind(lower, c(rep(paste(name, 'lower'), dim(lower)[2])))
+    upper <- rbind(num.upper, out.upper)
+    upper <- rbind(upper, c(rep(paste(name, 'upper'), dim(upper)[2])))
+    colnames(lower) <- c(rep(paste(name, 'lower'), dim(lower)[2]))
+    colnames(upper) <- c(rep(paste(name, 'upper'), dim(upper)[2]))
+    rownames(lower) <- c(ID.name, 'var.value', 'var.type')
+    rownames(upper) <- c(ID.name, 'var.value', 'var.type')
+    out <- cbind(lower, upper)
+    out <- as.data.frame(out)
+    return(out)
+}
+## output outliners
+out <- cbind(outline('GvI'), outline('MvI'), outline('GvN'), outline('MvN'), outline('vCN'), outline('vAN'))
+colnames(out) <- c(1:dim(out)[2])
+## matchup results to Affy or AGI
+ref <- matchup.out[order(matchup.out$Set.Num), ]
+rownames(ref) <- NULL
+out.t <- t(as.matrix(out))
+rm(expr, expr.out, expr.raw, matchup.out, out, ref.AGI, seq.AGI)
+out.gene <- matchup(seq.data = out.t, ref.data = ref, seq.col = 1, ref.col = 3, extra.col = 1:2)
+out.gene <- cbind(out.gene[, c(3:4)], out.t)
+out.gene <- out.gene[order(out.gene$Set.Num), ]
+rownames(out.gene) <- NULL
+## export results & plots
+write.table(out.gene, "./archive/out.gene.txt", sep="\t")

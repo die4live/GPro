@@ -188,3 +188,4 @@ out.gene <- out.gene[order(out.gene$Set.Num), ]
 rownames(out.gene) <- NULL
 ## export results & plots
 write.table(out.gene, "./archive/out.gene.txt", sep="\t")
+write.csv(out.gene, "./archive/out.gene.csv", fileEncoding = "UTF-8")
